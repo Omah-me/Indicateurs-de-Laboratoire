@@ -1,0 +1,66 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build 
+  image: node:20
+  script:
+    - echo "Building the Project with Angular"
+    - npm ci
+    - npm run build 
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 30 days
+
+
+test-job:
+  stage: test
+  image: node:20
+  before_script:
+    - apt-get update
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt install -y ./google-chrome*.deb;
+    - export CHROME_BIN=/usr/bin/google-chrome
+  script:
+    - npm ci
+    - npm run test -- --no-watch --browsers=ChromeHeadlessNoSandbox
+
+deploy-dev:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build-job
+  script:
+    - echo "Deploying to development server..."
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $DEV_SERVER >> ~/.ssh/known_hosts
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$DEV_SERVER "mkdir -p /home/$SSH_USER/app_front"
+    - scp -o StrictHostKeyChecking=no -r . $SSH_USER@$DEV_SERVER:/home/$SSH_USER/app_front/temp
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$DEV_SERVER "bash /home/$SSH_USER/app_front/deploy.sh"
+  only:
+    - main
+
+deploy-prod:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build-job
+  script:
+    - echo "Deploying to production server..."
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$PROD_SERVER "mkdir -p /home/$SSH_USER/app_front"
+    - scp -o StrictHostKeyChecking=no -r . $SSH_USER@$PROD_SERVER:/home/$SSH_USER/app_front/temp
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$PROD_SERVER "bash /home/$SSH_USER/app_front/deploy.sh"
+  only:
+    - main
+  when: manual

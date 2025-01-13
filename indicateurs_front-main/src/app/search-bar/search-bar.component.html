@@ -1,0 +1,94 @@
+<div class="sidebar">
+  <h3>Choisir le type de recherche</h3> 
+  <label [class.selected]="searchType === 'articles'">
+    <input type="radio" name="searchType" value="articles" [(ngModel)]="searchType" />
+    <span class="label-text">Articles</span>
+  </label>
+  <label [class.selected]="searchType === 'revues'">
+    <input type="radio" name="searchType" value="revues" [(ngModel)]="searchType" />
+    <span class="label-text">Revues</span>
+  </label>
+  <label [class.selected]="searchType === 'conferences'">
+    <input type="radio" name="searchType" value="conferences" [(ngModel)]="searchType" />
+    <span class="label-text">Conférences</span>
+  </label>
+  <label [class.selected]="searchType === 'chercheurs'">
+    <input type="radio" name="searchType" value="chercheurs" [(ngModel)]="searchType" />
+    <span class="label-text">Personnel</span>
+  </label>
+</div>
+
+
+    <!-- Barre de recherche -->
+    <div id="search-bar">
+      <input
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        (keydown)="onKeydown($event)"
+        placeholder="Rechercher..."
+        aria-label="Recherche"
+        name="searchQuery"
+      />
+      <span class="clear-icon" *ngIf="searchQuery" (click)="clearSearch()">&#10005;</span>
+      <button type="submit" (click)="onSearch()">
+        <img src="assets/images/search.png" alt="Rechercher" />
+      </button>
+    </div>
+ 
+
+
+<div id="results-container">
+  <!-- Affichage des résultats selon le type de recherche -->
+  <div *ngIf="searchType === 'articles' && articleList.length > 0">
+    <div class="article-card" *ngFor="let a of articleList">
+      <div class="article-card-header">
+        <p>{{ a.titre }} - {{ a.date }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="searchType === 'revues' && revueList.length > 0">
+    
+    <div class="revue-card" *ngFor="let r of revueList">
+      <div class="revue-card-header">
+        <p>{{ r.titre }} - {{ r.domaine }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="searchType === 'conferences' && conferenceList.length > 0">
+    
+    <div class="conference-card" *ngFor="let c of conferenceList">
+      <div class="conference-card-header">
+        <p>{{ c.titre }} - {{ c.classe }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="searchType === 'chercheurs' && (chercheurList.length > 0 || doctorantList.length > 0 || autrePosteList.length > 0)">
+    <div class="personnel-card" *ngFor="let p of chercheurList">
+      <div class="personnel-card-header">
+        <p>{{ p.nom }} - {{ p.prenom }} - {{ p.id }} - {{ p.statut }}</p>
+      </div>
+    </div>
+    <div class="personnel-card" *ngFor="let p of doctorantList">
+      <div class="personnel-card-header">
+        <p>{{ p.nom }} - {{ p.prenom }} - {{ p.id }} - {{ p.statut }}</p>
+      </div>
+    </div>
+    <div class="personnel-card" *ngFor="let p of autrePosteList">
+      <div class="personnel-card-header">
+        <p>{{ p.nom }} - {{ p.prenom }} - {{ p.id }} - {{ p.statut }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message si aucun résultat n'est trouvé -->
+  <div class="no-results">
+  <div *ngIf="(articleList.length === 0 && searchType === 'articles') ||
+  (revueList.length === 0 && searchType === 'revues') ||
+  (conferenceList.length === 0 && searchType === 'conferences') ||
+  (chercheurList.length === 0 && searchType === 'chercheurs' && doctorantList.length === 0 && autrePosteList.length === 0)">
+<p *ngIf="searchQuery">Aucun résultat trouvé pour <span class="highlight">"{{ searchQuery }}"</span></p>
+</div>
+</div>

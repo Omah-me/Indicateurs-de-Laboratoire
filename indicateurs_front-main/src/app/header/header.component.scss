@@ -1,0 +1,54 @@
+.navbar-nav .nav-item .btn {
+  background-color: #1d99ff; 
+  color: white; 
+  border: 1px solid transparent;
+  font-weight: 500; 
+}
+
+.navbar-nav .nav-item .btn.active {
+  background: linear-gradient(135deg, #1d99ff, #1565c0);
+  color: black; 
+  border-color: black;
+}
+
+.navbar-nav .nav-item .btn:hover {
+  background-color: #1d99ff; 
+  color: black; 
+  border-color: black; 
+}
+
+.nga-navbar {
+  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 11px 10px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 11px 10px 0 rgba(0, 0, 0, 0.12);
+  background-color:#1d99ff;
+}
+
+.nga-navbar-logo {
+  font-weight: 700;
+}
+
+.nga-navbar-logo:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+
+.logo-frame {
+  display: inline-block;
+  padding: 5px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-color: #007bff; 
+  }
+
+  
+}
+
+.logo-frame img {
+  width: auto;
+  height: auto;
+  max-width: 100px; 
+  max-height: 35px; 
+  object-fit: contain;
+}
